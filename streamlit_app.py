@@ -4,7 +4,7 @@ import common
 
 def main():
     # タイトル表示と共通設定
-    st.title("状態遷移図モデリングアプリ")
+    st.title("状態遷移図モデリングWebアプリ")
     display_header()
     set_font()
 
