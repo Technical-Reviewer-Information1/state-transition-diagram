@@ -1,31 +1,44 @@
-# Streamlitライブラリをインポート
 import streamlit as st
+import graphviz
+import common
 
-# ページ設定（タブに表示されるタイトル、表示幅）
-st.set_page_config(page_title="タイトル", layout="wide")
+def main():
+    # タイトル表示と共通設定
+    st.title("状態遷移図モデリングアプリ")
+    display_header()
+    set_font()
 
-# タイトルを設定
-st.title('Streamlitのサンプルアプリ')
+    # サイドバーで操作パネルを表示
+    st.sidebar.header("操作パネル")
+    st.sidebar.markdown("下記のテキストエリアに状態遷移を入力してください。")
+    st.sidebar.markdown("入力例： `状態A -> 状態B` （1行につき1つの遷移）")
+    
+    # ユーザーから状態遷移の入力を受け付ける
+    transitions_input = st.sidebar.text_area(
+        "状態遷移入力（1行につき1つの遷移）",
+        "状態A -> 状態B\n状態B -> 状態C\n状態C -> 状態A"
+    )
 
-# テキスト入力ボックスを作成し、ユーザーからの入力を受け取る
-user_input = st.text_input('あなたの名前を入力してください')
+    # 「状態遷移図を生成」ボタンが押された場合の処理
+    if st.sidebar.button("状態遷移図を生成"):
+        dot = graphviz.Digraph(format="png")
+        
+        # 入力された各行を解析し、Graphviz でエッジを生成
+        lines = transitions_input.splitlines()
+        for line in lines:
+            line = line.strip()
+            if "->" in line:
+                parts = line.split("->")
+                if len(parts) == 2:
+                    src = parts[0].strip()
+                    dst = parts[1].strip()
+                    dot.edge(src, dst)
+        
+        st.subheader("生成された状態遷移図")
+        st.graphviz_chart(dot)
 
-# ボタンを作成し、クリックされたらメッセージを表示
-if st.button('挨拶する'):
-    if user_input:  # 名前が入力されているかチェック
-        st.success(f'🌟 こんにちは、{user_input}さん! 🌟')  # メッセージをハイライト
-    else:
-        st.error('名前を入力してください。')  # エラーメッセージを表示
+    # フッターの各種リンク・情報表示
+    display_copyright()
 
-# スライダーを作成し、値を選択
-number = st.slider('好きな数字（10進数）を選んでください', 0, 100)
-
-# 補足メッセージ
-st.caption("十字キー（左右）でも調整できます。")
-
-# 選択した数字を表示
-st.write(f'あなたが選んだ数字は「{number}」です。')
-
-# 選択した数値を2進数に変換
-binary_representation = bin(number)[2:]  # 'bin'関数で2進数に変換し、先頭の'0b'を取り除く
-st.info(f'🔢 10進数の「{number}」を2進数で表現すると「{binary_representation}」になります。 🔢')  # 2進数の表示をハイライト
+if __name__ == "__main__":
+    main()
