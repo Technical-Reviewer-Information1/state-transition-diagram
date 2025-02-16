@@ -8,19 +8,19 @@ def main():
     common.display_header()
     common.set_font()
 
-    # サイドバーで操作パネルを表示
-    st.sidebar.header("操作パネル")
-    st.sidebar.markdown("下記のテキストエリアに状態遷移を入力してください。")
-    st.sidebar.markdown("入力例： `状態A -> 状態B` （1行につき1つの遷移）")
+    # 操作パネルの説明をメイン画面に表示
+    st.markdown("### 操作パネル")
+    st.markdown("下記のテキストエリアに状態遷移を入力してください。")
+    st.markdown("入力例： `状態A -> 状態B` （1行につき1つの遷移）")
     
     # ユーザーから状態遷移の入力を受け付ける
-    transitions_input = st.sidebar.text_area(
+    transitions_input = st.text_area(
         "状態遷移入力（1行につき1つの遷移）",
         "状態A -> 状態B\n状態B -> 状態C\n状態C -> 状態A"
     )
 
     # 「状態遷移図を生成」ボタンが押された場合の処理
-    if st.sidebar.button("状態遷移図を生成"):
+    if st.button("状態遷移図を生成"):
         dot = graphviz.Digraph(format="png")
         
         # 入力された各行を解析し、Graphviz でエッジを生成
@@ -37,7 +37,7 @@ def main():
         st.subheader("生成された状態遷移図")
         st.graphviz_chart(dot)
 
-    # フッターの各種リンク・情報表示
+    # フッターの表示
     common.display_copyright()
 
 if __name__ == "__main__":
