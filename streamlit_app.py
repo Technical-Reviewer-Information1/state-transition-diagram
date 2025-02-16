@@ -5,8 +5,8 @@ import common
 def main():
     # タイトル表示と共通設定
     st.title("状態遷移図モデリングWebアプリ")
-    display_header()
-    set_font()
+    common.display_header()
+    common.set_font()
 
     # サイドバーで操作パネルを表示
     st.sidebar.header("操作パネル")
@@ -38,7 +38,7 @@ def main():
         st.graphviz_chart(dot)
 
     # フッターの各種リンク・情報表示
-    display_copyright()
+    common.display_copyright()
 
 if __name__ == "__main__":
     main()
