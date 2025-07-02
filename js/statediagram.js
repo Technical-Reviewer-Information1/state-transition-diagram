@@ -519,6 +519,10 @@ class StateDiagramEngine {
         if (this.isTransitionMode) {
             if (item && item instanceof State) {
                 this.transitionStart = item;
+                // UI更新通知
+                if (this.onTransitionModeChanged) {
+                    this.onTransitionModeChanged();
+                }
             }
             return;
         }
@@ -537,6 +541,12 @@ class StateDiagramEngine {
     // マウス移動イベント
     handleMouseMove(event) {
         const point = this.getCanvasPoint(event);
+        
+        // 遷移作成中のマウス位置を記録
+        if (this.isTransitionMode && this.transitionStart) {
+            this.transitionPreview = point;
+            this.render(); // プレビュー線を描画するため再描画
+        }
         
         if (this.dragStart && this.dragItem && MathUtils.distance(point, this.dragStart) > 5) {
             this.isDragging = true;
@@ -579,7 +589,23 @@ class StateDiagramEngine {
         }
         
         // カーソルの変更
-        if (this.hoveredItem) {
+        if (this.isTransitionMode) {
+            if (this.transitionStart) {
+                // 遷移作成中
+                if (this.hoveredItem instanceof State && this.hoveredItem !== this.transitionStart) {
+                    this.canvas.style.cursor = 'copy'; // 接続可能な状態
+                } else {
+                    this.canvas.style.cursor = 'not-allowed'; // 接続不可
+                }
+            } else {
+                // 遷移開始状態を選択中
+                if (this.hoveredItem instanceof State) {
+                    this.canvas.style.cursor = 'crosshair'; // 遷移開始可能
+                } else {
+                    this.canvas.style.cursor = 'crosshair'; // 遷移モード
+                }
+            }
+        } else if (this.hoveredItem) {
             this.canvas.style.cursor = 'pointer';
         } else {
             this.canvas.style.cursor = 'default';
@@ -597,6 +623,13 @@ class StateDiagramEngine {
             }
             
             this.transitionStart = null;
+            this.transitionPreview = null;
+            this.render(); // プレビュー線を消去
+            
+            // UI更新通知
+            if (this.onTransitionModeChanged) {
+                this.onTransitionModeChanged();
+            }
         }
         
         this.isDragging = false;
@@ -955,24 +988,73 @@ class StateDiagramEngine {
             state.draw(ctx);
         });
         
-        // 遷移作成中の線を描画
-        if (this.isTransitionMode && this.transitionStart && this.dragStart) {
-            ctx.save();
-            ctx.strokeStyle = '#3498db';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([5, 5]);
+        // 遷移モードでの視覚的フィードバック
+        if (this.isTransitionMode) {
+            // 遷移開始状態のハイライト
+            if (this.transitionStart) {
+                ctx.save();
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([8, 4]);
+                ctx.beginPath();
+                ctx.arc(this.transitionStart.x, this.transitionStart.y, this.transitionStart.radius + 8, 0, 2 * Math.PI);
+                ctx.stroke();
+                ctx.restore();
+                
+                // プレビュー線を描画
+                if (this.transitionPreview) {
+                    ctx.save();
+                    ctx.strokeStyle = '#3498db';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([8, 4]);
+                    ctx.globalAlpha = 0.7;
+                    
+                    const startPoint = {
+                        x: this.transitionStart.x,
+                        y: this.transitionStart.y
+                    };
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(startPoint.x, startPoint.y);
+                    ctx.lineTo(this.transitionPreview.x, this.transitionPreview.y);
+                    ctx.stroke();
+                    
+                    // 矢印を描画
+                    const angle = Math.atan2(this.transitionPreview.y - startPoint.y, this.transitionPreview.x - startPoint.x);
+                    const arrowLength = 15;
+                    const arrowAngle = Math.PI / 6;
+                    
+                    ctx.globalAlpha = 1;
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = '#3498db';
+                    ctx.beginPath();
+                    ctx.moveTo(this.transitionPreview.x, this.transitionPreview.y);
+                    ctx.lineTo(
+                        this.transitionPreview.x - arrowLength * Math.cos(angle - arrowAngle),
+                        this.transitionPreview.y - arrowLength * Math.sin(angle - arrowAngle)
+                    );
+                    ctx.lineTo(
+                        this.transitionPreview.x - arrowLength * Math.cos(angle + arrowAngle),
+                        this.transitionPreview.y - arrowLength * Math.sin(angle + arrowAngle)
+                    );
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    ctx.restore();
+                }
+            }
             
-            const startPoint = {
-                x: this.transitionStart.x,
-                y: this.transitionStart.y
-            };
-            
-            ctx.beginPath();
-            ctx.moveTo(startPoint.x, startPoint.y);
-            ctx.lineTo(this.dragStart.x, this.dragStart.y);
-            ctx.stroke();
-            
-            ctx.restore();
+            // ホバー中の状態をハイライト（遷移先候補）
+            if (this.hoveredItem instanceof State && this.hoveredItem !== this.transitionStart && this.transitionStart) {
+                ctx.save();
+                ctx.strokeStyle = '#27ae60';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.arc(this.hoveredItem.x, this.hoveredItem.y, this.hoveredItem.radius + 5, 0, 2 * Math.PI);
+                ctx.stroke();
+                ctx.restore();
+            }
         }
         
         ctx.restore();
@@ -1031,7 +1113,11 @@ class StateDiagramEngine {
     setTransitionMode(enabled) {
         this.isTransitionMode = enabled;
         this.transitionStart = null;
+        this.transitionPreview = null;
         this.canvas.style.cursor = enabled ? 'crosshair' : 'default';
+        
+        // 遷移モード変更時に再描画
+        this.render();
     }
 
     // グリッド設定

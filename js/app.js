@@ -127,6 +127,10 @@ class StateDiagramApp {
         this.engine.onContextMenu = (event, item) => {
             this.showContextMenu(event, item);
         };
+        
+        this.engine.onTransitionModeChanged = () => {
+            this.updateToolStatus();
+        };
     }
 
     // マネージャーの初期化
@@ -699,14 +703,23 @@ class StateDiagramApp {
     updateToolStatus() {
         const toolNames = {
             'select': '選択ツール',
-            'transition': '遷移ツール',
+            'transition': '遷移ツール - 開始状態をクリック、次に終了状態をクリック',
             'delete': '削除ツール',
             'initial': '初期状態作成',
             'normal': '通常状態作成',
             'final': '終了状態作成'
         };
         
-        this.elements.toolStatus.textContent = toolNames[this.currentTool] || 'ツール';
+        // 遷移モードでの詳細説明
+        if (this.currentTool === 'transition') {
+            if (this.engine.transitionStart) {
+                this.elements.toolStatus.textContent = '遷移ツール - 終了状態をクリックして接続';
+            } else {
+                this.elements.toolStatus.textContent = toolNames[this.currentTool];
+            }
+        } else {
+            this.elements.toolStatus.textContent = toolNames[this.currentTool] || 'ツール';
+        }
     }
 
     // アプリステータスの更新
