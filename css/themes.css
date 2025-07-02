@@ -1,0 +1,374 @@
+/* テーマカラー設定 */
+
+/* デフォルトテーマ（ブルー） */
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --primary-light: #e3f2fd;
+    --secondary-color: #95a5a6;
+    --secondary-dark: #7f8c8d;
+    --accent-color: #e74c3c;
+    --accent-dark: #c0392b;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --info-color: #17a2b8;
+    
+    --background-color: #f5f5f5;
+    --surface-color: #ffffff;
+    --surface-dark: #f8f9fa;
+    --border-color: #dddddd;
+    --border-light: #eeeeee;
+    
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --text-inverse: #ffffff;
+    
+    --header-bg: #2c3e50;
+    --sidebar-bg: #ffffff;
+    --canvas-bg: #f8f9fa;
+    --status-bg: #ecf0f1;
+    
+    --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-medium: 0 4px 8px rgba(0,0,0,0.15);
+    --shadow-heavy: 0 8px 16px rgba(0,0,0,0.2);
+    
+    --grid-color: #e0e0e0;
+    --grid-major-color: #cccccc;
+}
+
+/* ダークテーマ */
+[data-theme="dark"] {
+    --primary-color: #4fc3f7;
+    --primary-dark: #29b6f6;
+    --primary-light: #1e3a5f;
+    --secondary-color: #78909c;
+    --secondary-dark: #607d8b;
+    --accent-color: #ff5722;
+    --accent-dark: #d84315;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --info-color: #00bcd4;
+    
+    --background-color: #121212;
+    --surface-color: #1e1e1e;
+    --surface-dark: #2d2d2d;
+    --border-color: #444444;
+    --border-light: #333333;
+    
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --text-muted: #808080;
+    --text-inverse: #000000;
+    
+    --header-bg: #1a1a1a;
+    --sidebar-bg: #1e1e1e;
+    --canvas-bg: #121212;
+    --status-bg: #1a1a1a;
+    
+    --shadow-light: 0 2px 4px rgba(0,0,0,0.3);
+    --shadow-medium: 0 4px 8px rgba(0,0,0,0.4);
+    --shadow-heavy: 0 8px 16px rgba(0,0,0,0.5);
+    
+    --grid-color: #333333;
+    --grid-major-color: #444444;
+}
+
+/* グリーンテーマ */
+[data-theme="green"] {
+    --primary-color: #4caf50;
+    --primary-dark: #388e3c;
+    --primary-light: #e8f5e8;
+    --secondary-color: #607d8b;
+    --secondary-dark: #455a64;
+    --accent-color: #ff5722;
+    --accent-dark: #d84315;
+    
+    --header-bg: #2e7d32;
+    --text-inverse: #ffffff;
+}
+
+/* パープルテーマ */
+[data-theme="purple"] {
+    --primary-color: #9c27b0;
+    --primary-dark: #7b1fa2;
+    --primary-light: #f3e5f5;
+    --secondary-color: #607d8b;
+    --secondary-dark: #455a64;
+    --accent-color: #ff5722;
+    --accent-dark: #d84315;
+    
+    --header-bg: #6a1b9a;
+    --text-inverse: #ffffff;
+}
+
+/* オレンジテーマ */
+[data-theme="orange"] {
+    --primary-color: #ff9800;
+    --primary-dark: #f57c00;
+    --primary-light: #fff3e0;
+    --secondary-color: #607d8b;
+    --secondary-dark: #455a64;
+    --accent-color: #3f51b5;
+    --accent-dark: #303f9f;
+    
+    --header-bg: #e65100;
+    --text-inverse: #ffffff;
+}
+
+/* 高コントラストテーマ */
+[data-theme="high-contrast"] {
+    --primary-color: #0066cc;
+    --primary-dark: #0052a3;
+    --primary-light: #e6f2ff;
+    --secondary-color: #666666;
+    --secondary-dark: #4d4d4d;
+    --accent-color: #cc0000;
+    --accent-dark: #990000;
+    --success-color: #006600;
+    --warning-color: #cc6600;
+    --info-color: #0099cc;
+    
+    --background-color: #ffffff;
+    --surface-color: #ffffff;
+    --surface-dark: #f5f5f5;
+    --border-color: #000000;
+    --border-light: #666666;
+    
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #666666;
+    --text-inverse: #ffffff;
+    
+    --header-bg: #000000;
+    --sidebar-bg: #ffffff;
+    --canvas-bg: #ffffff;
+    --status-bg: #f0f0f0;
+    
+    --grid-color: #999999;
+    --grid-major-color: #666666;
+}
+
+/* テーマ適用用のCSS変数利用 */
+html, body {
+    background-color: var(--background-color);
+    color: var(--text-primary);
+}
+
+.header {
+    background-color: var(--header-bg);
+    color: var(--text-inverse);
+    box-shadow: var(--shadow-light);
+}
+
+.sidebar, .properties-panel {
+    background-color: var(--sidebar-bg);
+    border-color: var(--border-color);
+}
+
+.canvas-container {
+    background-color: var(--canvas-bg);
+}
+
+.canvas-toolbar {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+}
+
+#main-canvas {
+    background-color: var(--surface-color);
+}
+
+.status-bar {
+    background-color: var(--status-bg);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--text-inverse);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-inverse);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-dark);
+}
+
+.btn-danger {
+    background-color: var(--accent-color);
+    color: var(--text-inverse);
+}
+
+.btn-danger:hover {
+    background-color: var(--accent-dark);
+}
+
+.tool-btn {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.tool-btn:hover {
+    border-color: var(--primary-color);
+    background-color: var(--surface-dark);
+}
+
+.tool-btn.active {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.modal {
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-heavy);
+}
+
+.modal-header, .modal-footer {
+    border-color: var(--border-light);
+}
+
+.modal-close {
+    color: var(--text-muted);
+}
+
+.modal-close:hover {
+    color: var(--text-secondary);
+}
+
+.form-group input, .form-group textarea, .form-group select, .template-select {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.history-list {
+    background-color: var(--surface-dark);
+    border-color: var(--border-light);
+}
+
+.tool-panel h3, .properties-panel h3, .history-panel h3 {
+    color: var(--text-primary);
+}
+
+.tool-section h4 {
+    color: var(--text-secondary);
+}
+
+.canvas-info {
+    color: var(--text-secondary);
+}
+
+/* 状態図形のテーマ適用 */
+.state-preview.initial-state {
+    background-color: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
+.state-preview.normal-state {
+    background-color: var(--surface-color);
+    border-color: var(--text-primary);
+}
+
+.state-preview.final-state {
+    background-color: var(--surface-color);
+    border-color: var(--text-primary);
+}
+
+/* スクロールバーのテーマ適用 */
+::-webkit-scrollbar-track {
+    background: var(--surface-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* テーマ切り替えボタン */
+.theme-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    display: flex;
+    gap: 4px;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 4px;
+    box-shadow: var(--shadow-medium);
+}
+
+.theme-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.theme-btn.active::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+}
+
+.theme-btn.default { background-color: #3498db; }
+.theme-btn.dark { background-color: #2c3e50; }
+.theme-btn.green { background-color: #4caf50; }
+.theme-btn.purple { background-color: #9c27b0; }
+.theme-btn.orange { background-color: #ff9800; }
+.theme-btn.high-contrast { 
+    background: linear-gradient(45deg, #000 50%, #fff 50%);
+}
+
+/* レスポンシブ対応でテーマスイッチャーを調整 */
+@media (max-width: 768px) {
+    .theme-switcher {
+        top: 10px;
+        right: 10px;
+        scale: 0.8;
+    }
+    
+    .theme-btn {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* アニメーション付きテーマ切り替え */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* 特定の要素は即座に切り替え */
+canvas, .canvas-overlay, .modal-overlay {
+    transition: none;
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>状態遷移図構築支援アプリケーション</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+    <div id="app">
+        <!-- ヘッダー -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">状態遷移図エディタ</h1>
+                <div class="header-controls">
+                    <button id="save-btn" class="btn btn-primary" title="保存 (Ctrl+S)">
+                        <span class="icon">💾</span>保存
+                    </button>
+                    <button id="load-btn" class="btn btn-primary" title="読み込み (Ctrl+O)">
+                        <span class="icon">📁</span>開く
+                    </button>
+                    <button id="export-btn" class="btn btn-secondary" title="エクスポート">
+                        <span class="icon">📤</span>エクスポート
+                    </button>
+                    <button id="validate-btn" class="btn btn-secondary" title="検証 (V)">
+                        <span class="icon">✓</span>検証
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <!-- サイドパネル -->
+            <aside class="sidebar">
+                <div class="tool-panel">
+                    <h3>ツール</h3>
+                    
+                    <!-- 状態作成ツール -->
+                    <div class="tool-section">
+                        <h4>状態</h4>
+                        <div class="tool-buttons">
+                            <button id="initial-state-btn" class="tool-btn" data-tool="initial-state" title="初期状態">
+                                <div class="state-preview initial-state"></div>
+                                <span>初期状態</span>
+                            </button>
+                            <button id="normal-state-btn" class="tool-btn" data-tool="normal-state" title="通常状態">
+                                <div class="state-preview normal-state"></div>
+                                <span>通常状態</span>
+                            </button>
+                            <button id="final-state-btn" class="tool-btn" data-tool="final-state" title="終了状態">
+                                <div class="state-preview final-state"></div>
+                                <span>終了状態</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 操作ツール -->
+                    <div class="tool-section">
+                        <h4>操作</h4>
+                        <div class="tool-buttons">
+                            <button id="select-btn" class="tool-btn active" data-tool="select" title="選択">
+                                <span class="icon">👆</span>
+                                <span>選択</span>
+                            </button>
+                            <button id="transition-btn" class="tool-btn" data-tool="transition" title="遷移 (T)">
+                                <span class="icon">↗️</span>
+                                <span>遷移</span>
+                            </button>
+                            <button id="delete-btn" class="tool-btn" data-tool="delete" title="削除 (Delete)">
+                                <span class="icon">🗑️</span>
+                                <span>削除</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 表示オプション -->
+                    <div class="tool-section">
+                        <h4>表示</h4>
+                        <div class="display-controls">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="grid-toggle" checked>
+                                <span>グリッド表示</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="snap-toggle" checked>
+                                <span>グリッドスナップ</span>
+                            </label>
+                        </div>
+                        <div class="zoom-controls">
+                            <button id="zoom-in-btn" class="btn btn-small" title="ズームイン (Ctrl++)">+</button>
+                            <span id="zoom-level">100%</span>
+                            <button id="zoom-out-btn" class="btn btn-small" title="ズームアウト (Ctrl+-)">-</button>
+                            <button id="fit-btn" class="btn btn-small" title="フィット表示 (F)">フィット</button>
+                        </div>
+                    </div>
+
+                    <!-- テンプレート -->
+                    <div class="tool-section">
+                        <h4>テンプレート</h4>
+                        <select id="template-select" class="template-select">
+                            <option value="">テンプレートを選択</option>
+                            <option value="alarm-clock">目覚まし時計</option>
+                            <option value="vending-machine">自動販売機</option>
+                            <option value="login-system">ログインシステム</option>
+                            <option value="game-state">ゲーム状態</option>
+                        </select>
+                        <button id="apply-template-btn" class="btn btn-small">適用</button>
+                    </div>
+                </div>
+
+                <!-- 履歴パネル -->
+                <div class="history-panel">
+                    <h3>履歴</h3>
+                    <div class="history-controls">
+                        <button id="undo-btn" class="btn btn-small" title="元に戻す (Ctrl+Z)" disabled>↶</button>
+                        <button id="redo-btn" class="btn btn-small" title="やり直し (Ctrl+Y)" disabled>↷</button>
+                    </div>
+                    <div id="history-list" class="history-list"></div>
+                </div>
+            </aside>
+
+            <!-- キャンバスエリア -->
+            <div class="canvas-container">
+                <div class="canvas-toolbar">
+                    <div class="canvas-info">
+                        <span id="canvas-info">状態: 0, 遷移: 0</span>
+                    </div>
+                    <div class="canvas-controls">
+                        <button id="clear-btn" class="btn btn-danger btn-small">クリア</button>
+                    </div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="main-canvas" width="800" height="600"></canvas>
+                    <canvas id="grid-canvas" width="800" height="600"></canvas>
+                    <div id="canvas-overlay" class="canvas-overlay"></div>
+                </div>
+            </div>
+
+            <!-- プロパティパネル -->
+            <aside class="properties-panel" id="properties-panel">
+                <h3>プロパティ</h3>
+                <div id="properties-content" class="properties-content">
+                    <p>項目を選択してください</p>
+                </div>
+            </aside>
+        </main>
+
+        <!-- モーダルダイアログ -->
+        <div id="modal-overlay" class="modal-overlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 id="modal-title">タイトル</h3>
+                    <button id="modal-close" class="modal-close">×</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- モーダル内容 -->
+                </div>
+                <div class="modal-footer">
+                    <button id="modal-cancel" class="btn btn-secondary">キャンセル</button>
+                    <button id="modal-confirm" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ステータスバー -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span id="tool-status">選択ツール</span>
+                <span id="coord-status">座標: (0, 0)</span>
+            </div>
+            <div class="status-right">
+                <span id="app-status">準備完了</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ファイル入力（非表示） -->
+    <input type="file" id="file-input" accept=".json" style="display: none;">
+
+    <!-- スクリプト -->
+    <script src="js/utils.js"></script>
+    <script src="js/statediagram.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/statetable.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
