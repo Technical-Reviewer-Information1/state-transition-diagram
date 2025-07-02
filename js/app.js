@@ -26,6 +26,9 @@ class StateDiagramApp {
         this.updateUI();
         this.checkURLParams();
         
+        // 初期ツールを設定
+        this.setTool('select');
+        
         // 初期状態を履歴に追加
         this.saveToHistory('初期状態');
         
@@ -199,7 +202,8 @@ class StateDiagramApp {
         
         // キャンバスクリック（状態作成）
         DOMUtils.on(this.elements.mainCanvas, 'click', (e) => {
-            if (this.currentTool !== 'select' && this.currentTool !== 'transition' && this.currentTool !== 'delete') {
+            // 状態作成ツールが選択されている場合のみ状態を作成
+            if (this.currentTool === 'initial' || this.currentTool === 'normal' || this.currentTool === 'final') {
                 const point = this.engine.getCanvasPoint(e);
                 const item = this.engine.getItemAt(point);
                 
@@ -306,17 +310,25 @@ class StateDiagramApp {
     setTool(tool) {
         this.currentTool = tool;
         
-        // ツールボタンの更新
-        const toolButtons = DOMUtils.getAll('.tool-btn[data-tool]');
-        toolButtons.forEach(btn => {
+        // すべてのツールボタンを非アクティブに
+        const allToolButtons = DOMUtils.getAll('.tool-btn');
+        allToolButtons.forEach(btn => {
             DOMUtils.removeClass(btn, 'active');
-            if (btn.dataset.tool === tool) {
-                DOMUtils.addClass(btn, 'active');
-            }
         });
+        
+        // 選択されたツールボタンをアクティブに（状態作成ボタン以外）
+        const toolButton = DOMUtils.get(`#${tool}-btn`);
+        if (toolButton) {
+            DOMUtils.addClass(toolButton, 'active');
+        }
         
         // エンジンの遷移モードを設定
         this.engine.setTransitionMode(tool === 'transition');
+        
+        // 状態作成ツールの場合、currentStateTypeをリセット
+        if (tool === 'select' || tool === 'transition' || tool === 'delete') {
+            this.currentStateType = 'normal'; // デフォルトに戻す
+        }
         
         this.updateToolStatus();
     }
@@ -324,14 +336,19 @@ class StateDiagramApp {
     // 状態タイプの設定
     setStateType(type) {
         this.currentStateType = type;
-        this.setTool(type);
+        this.currentTool = type; // ツールを直接設定
         
-        // 状態ボタンの更新
-        const stateButtons = DOMUtils.getAll('.tool-btn[data-tool$="-state"]');
-        stateButtons.forEach(btn => {
+        // すべてのツールボタンを非アクティブに
+        const allToolButtons = DOMUtils.getAll('.tool-btn');
+        allToolButtons.forEach(btn => {
             DOMUtils.removeClass(btn, 'active');
         });
+        
+        // 選択された状態ボタンをアクティブに
         DOMUtils.addClass(DOMUtils.get(`#${type}-state-btn`), 'active');
+        
+        // エンジンの遷移モードを無効に（状態作成モード）
+        this.engine.setTransitionMode(false);
         
         this.updateToolStatus();
     }

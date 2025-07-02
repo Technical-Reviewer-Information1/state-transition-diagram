@@ -611,9 +611,10 @@ class StateDiagramEngine {
         const point = this.getCanvasPoint(event);
         const item = this.getItemAt(point);
         
-        if (!item && !this.isTransitionMode) {
-            // 空の場所をクリック - 状態を作成
-            this.createStateAt(point);
+        // 状態作成は app.js で処理するため、ここでは何もしない
+        // 選択やクリアなどの処理のみ行う
+        if (!item) {
+            this.clearSelection();
         }
     }
 
